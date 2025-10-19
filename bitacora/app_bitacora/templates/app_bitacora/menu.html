@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Principal - Bitácora Frijol</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+            color: #2e2e2e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2a4d24;
+            font-size: 42px;
+            margin-bottom: 40px;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn {
+            background-color: #3c8045;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2f6136;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Menú Principal</h1>
+
+    <div class="menu-container">
+        <a href="#" class="btn">🌱 Experimentos</a>
+        <a href="#" class="btn">📊 Registros / Bitácora</a>
+        <a href="#" class="btn">🌿 Gráficas</a>
+        <a href="#" class="btn">🪴 Plantas</a>
+        <a href="{% url 'logout' %}" class="btn">🚪 Cerrar Sesión</a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+# --- Entornos virtuales ---
+env/
+venv/
+envs/
+.venv/
+
+# --- Archivos sensibles ---
+bitacora/bitacora/settings.py
+*.env
+.env
+
+# --- Base de datos ---
+db.sqlite3
+
+# --- Python cache ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Archivos del sistema ---
+.DS_Store
+Thumbs.db
+
+# --- Archivos de IDE ---
+.vscode/
+.idea/
+
+# --- Archivos de migraciones opcionales ---
+*/migrations/*
+!*/migrations/__init__.py

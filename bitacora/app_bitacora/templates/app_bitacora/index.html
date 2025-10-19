@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitácora Frijol</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f5f5f5;
+            color: #2e2e2e;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 150px;
+            margin: 0;
+            font-weight: 800;
+            color: #2a4d24;
+        }
+
+        h2 {
+            font-size: 110px;
+            margin: 0;
+            color: #40793e;
+        }
+
+        .button-container {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .btn {
+            background-color: #3c8045;
+            color: white;
+            padding: 30px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 25px;
+            text-decoration: none;
+            display: inline-block;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            text-align: right;
+        }
+
+        .title-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.1;
+        }
+
+        .semillin {
+            width: 200px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="title-wrapper">
+        <div class="title-text">
+            <h1>Bitácora</h1>
+            <h2>Frijol</h2>
+        </div>
+        <img src="{% static 'img/semillin_saludando_guiño.png' %}" alt="Semillín saludando" class="semillin">
+    </div>
+
+    <div class="button-container">
+        <a class="btn" href="{% url 'register' %}">Crear Usuario</a>
+        <a class="btn" href="{% url 'login' %}">Iniciar Sesión</a>
+    </div>
+
+</body>
+</html>
