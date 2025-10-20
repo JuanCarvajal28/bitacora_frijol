@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Bitácora Frijol</title>
@@ -28,6 +29,7 @@
         h2 {
             color: #2f6136;
             margin-bottom: 25px;
+            font-size: 30px;
         }
 
         input {
@@ -90,11 +92,17 @@
             font-size: 15px;
         }
 
+        .semillin {
+            width: 230px;
+            height: auto;
+        }
+
     </style>
     
 </head>
 <body>
 
+    <img src="{% static imagen_estado %}" alt="Semillín" class="semillin">
     <div class="container">
         <a href="{% url 'index' %}" class="back-arrow" title="Volver al inicio">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">

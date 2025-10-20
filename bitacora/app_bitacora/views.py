@@ -8,6 +8,7 @@ def index(request):
     return render(request, 'app_bitacora/index.html')
 
 def register(request):
+    imagen_estado = 'img/semillin_sonriendo_señalando.png'
     if request.method == 'POST':
         username = request.POST['username']
         email = request.POST['email']
@@ -15,15 +16,18 @@ def register(request):
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "El nombre de usuario ya está en uso.")
-            return render(request, 'app_bitacora/register.html')
+            imagen_estado = 'img/semillin_confundido.png'
+            return render(request, 'app_bitacora/register.html', {'imagen_estado': imagen_estado})
 
         user = User.objects.create_user(username=username, email=email, password=password)
         login(request, user)
         return redirect('menu')
 
-    return render(request, 'app_bitacora/register.html')
+    return render(request, 'app_bitacora/register.html', {'imagen_estado': imagen_estado})
 
 def login_view(request):
+    imagen_estado = 'img/semillin_sonriendo_señalando.png'
+
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -34,9 +38,9 @@ def login_view(request):
             return redirect('menu')
         else:
             messages.error(request, "Usuario o contraseña incorrectos.")
-            return render(request, 'app_bitacora/login.html')
+            imagen_estado = 'img/semillin_triste.png'
 
-    return render(request, 'app_bitacora/login.html')
+    return render(request, 'app_bitacora/login.html', {'imagen_estado': imagen_estado})
 
 @login_required
 def menu(request):

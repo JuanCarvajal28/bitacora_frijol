@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Bitácora Frijol</title>
@@ -28,6 +29,7 @@
         h2 {
             color: #2f6136;
             margin-bottom: 25px;
+            font-size: 30px;
         }
 
         input {
@@ -89,10 +91,16 @@
             border-radius: 8px;
             font-size: 15px;
         }
+
+        .semillin {
+            width: 250px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
 
+    <img src="{% static imagen_estado %}" alt="Semillín" class="semillin">    
     <div class="container">
 
         <a href="{% url 'index' %}" class="back-arrow" title="Volver al inicio">
