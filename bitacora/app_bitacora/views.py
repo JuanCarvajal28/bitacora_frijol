@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from app_bitacora.models import Experimentos, Plantas, Etapas, Registros
+from datetime import date
 
 def index(request):
     return render(request, 'app_bitacora/index.html')
@@ -49,3 +51,50 @@ def menu(request):
 def logout_view(request):
     logout(request)
     return redirect('index')
+
+@login_required
+def experimentos(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+
+        if not nombre:
+            messages.error(request, "El nombre del experimento es obligatorio.")
+            return redirect('experimentos')
+
+        planta_frijol = Plantas.objects.filter(nombre_comun__iexact='Frijol').first()
+
+        if planta_frijol:
+            Experimentos.objects.create(
+                id_usuario=request.user,
+                id_planta=planta_frijol,
+                nombre=nombre,
+                descripcion=descripcion,
+                fecha_inicio=date.today()
+            )
+            messages.success(request, f"Experimento '{nombre}' creado exitosamente.")
+        else:
+            messages.error(request, "No existe la planta 'Frijol' en la base de datos.")
+        return redirect('experimentos')
+
+    lista_experimentos = Experimentos.objects.filter(id_usuario=request.user).order_by('-id_experimento')
+    return render(request, 'app_bitacora/experimentos.html', {'experimentos': lista_experimentos})
+
+@login_required
+def eliminar_experimento(request, id):
+    experimento = get_object_or_404(Experimentos, id_experimento=id, id_usuario=request.user)
+    experimento.delete()
+    return redirect('experimentos')
+
+@login_required
+def finalizar_experimento(request, id):
+    experimento = get_object_or_404(Experimentos, id_experimento=id, id_usuario=request.user)
+
+    if not experimento.fecha_fin:
+        experimento.fecha_fin = date.today()
+        experimento.save()
+        messages.success(request, f"El experimento '{experimento.nombre}' fue finalizado.")
+    else:
+        messages.info(request, f"El experimento '{experimento.nombre}' ya estaba finalizado.")
+
+    return redirect('experimentos')
