@@ -12,6 +12,7 @@ class Plantas(models.Model):
     region_origen = models.CharField(max_length=100, blank=True, null=True)
     edad_planta = models.IntegerField(blank=True, null=True)
     descripcion = models.TextField(blank=True, null=True)
+    imagen = models.ImageField(upload_to='img/')
 
     class Meta:
         managed = False
