@@ -5,7 +5,7 @@ envs/
 .venv/
 
 # --- Archivos sensibles ---
-bitacora/bitacora/settings.py
+# bitacora/bitacora/settings.py
 *.env
 .env
 
