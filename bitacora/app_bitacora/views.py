@@ -98,3 +98,27 @@ def finalizar_experimento(request, id):
         messages.info(request, f"El experimento '{experimento.nombre}' ya estaba finalizado.")
 
     return redirect('experimentos')
+
+
+@login_required
+def plantas(request):
+    if request.method == 'POST':
+        nombre_comun = request.POST.get('nombre_comun')
+        nombre_cientifico = request.POST.get('nombre_cientifico')
+        familia = request.POST.get('familia')
+        region_origen = request.POST.get('region_origen')
+        edad_planta = request.POST.get('edad_planta')
+        descripcion = request.POST.get('descripcion')
+
+        Plantas.objects.create(
+            nombre_comun=nombre_comun,
+            nombre_cientifico=nombre_cientifico,
+            familia=familia,
+            region_origen=region_origen,
+            edad_planta=edad_planta,
+            descripcion=descripcion
+        )
+        return redirect('plantas')
+
+    plantas = Plantas.objects.all()
+    return render(request, 'app_bitacora/planta.html', {'plantas': plantas})
