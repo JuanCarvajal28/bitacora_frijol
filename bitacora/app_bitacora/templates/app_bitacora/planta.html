@@ -77,11 +77,19 @@
         {% for planta in plantas %}
         <div class="col-12 col-md-6 col-lg-4">
           <div class="card h-100">
+            {% if planta.imagen %}
             <img
               src="/media/{{ planta.imagen }}"
               class="card-img-top"
               alt="{{ planta.nombre_comun }}"
             />
+            {% else %}
+            <img
+              src="/media/not-found.jpg"
+              class="card-img-top"
+              alt="{{ planta.nombre_comun }}"
+            />
+            {% endif %}
             <div class="card-body text-start">
               <h5 class="card-title text-success fw-bold">
                 {{ planta.nombre_comun }}
