@@ -11,8 +11,9 @@ class Plantas(models.Model):
     familia = models.CharField(max_length=100, blank=True, null=True)
     region_origen = models.CharField(max_length=100, blank=True, null=True)
     edad_planta = models.IntegerField(blank=True, null=True)
-    descripcion = models.TextField(blank=True, null=True)
+    rareza = models.CharField(max_length=100)
     imagen = models.ImageField(upload_to='img/')
+    descripcion = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -72,22 +73,14 @@ class Experimentos(models.Model):
 # ==========================
 class Registros(models.Model):
     id_registro = models.AutoField(primary_key=True)
-    id_planta = models.ForeignKey(
-        Plantas,
+    id_experimento = models.ForeignKey(
+        Experimentos,
         on_delete=models.DO_NOTHING,
-        db_column='id_planta'
+        db_column='id_experimento'
     )
-    id_etapa = models.ForeignKey(
-        Etapas,
-        on_delete=models.DO_NOTHING,
-        db_column='id_etapa',
-        blank=True,
-        null=True
-    )
-    altura_cm = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    hojas = models.IntegerField(blank=True, null=True)
-    luz_horas = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    altura_cm = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)    
     fecha_registro = models.DateField(blank=True, null=True)
+    imagen = models.ImageField(upload_to='img/')
 
     class Meta:
         managed = False

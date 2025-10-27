@@ -17,7 +17,7 @@ def index(request):
     return render(request, "app_bitacora/index.html")
 
 
-def register(request):
+def signup(request):
     imagen_estado = "img/semillin_sonriendo_señalando.png"
     if request.method == "POST":
         username = request.POST["username"]
@@ -28,7 +28,7 @@ def register(request):
             messages.error(request, "El nombre de usuario ya está en uso.")
             imagen_estado = "img/semillin_confundido.png"
             return render(
-                request, "app_bitacora/register.html", {"imagen_estado": imagen_estado}
+                request, "app_bitacora/signup.html", {"imagen_estado": imagen_estado}
             )
 
         user = User.objects.create_user(
@@ -38,7 +38,7 @@ def register(request):
         return redirect("menu")
 
     return render(
-        request, "app_bitacora/register.html", {"imagen_estado": imagen_estado}
+        request, "app_bitacora/signup.html", {"imagen_estado": imagen_estado}
     )
 
 
@@ -81,6 +81,7 @@ def experimentos(request):
     if request.method == "POST":
         nombre = request.POST.get("nombre")
         descripcion = request.POST.get("descripcion")
+        date = request.POST.get("fecha_fin")
 
         if not nombre:
             messages.error(request, "El nombre del experimento es obligatorio.")
@@ -95,6 +96,7 @@ def experimentos(request):
                 nombre=nombre,
                 descripcion=descripcion,
                 fecha_inicio=date.today(),
+                fecha_fin=fecha_fin,
             )
             messages.success(request, f"Experimento '{nombre}' creado exitosamente.")
         else:

@@ -82,52 +82,22 @@
         <div class="row g-3">
           <!-- Selección de Planta -->
           <div class="col-md-6">
-            <label for="id_planta" class="form-label">Planta</label>
+            <label for="id_experimientos" class="form-label"
+              >Experimentos</label
+            >
             <select
-              name="id_planta"
-              id="id_planta"
+              name="id_experimientos"
+              id="id_experimientos"
               class="form-select"
               required
             >
-              <option value="">Selecciona una planta</option>
-              {% for planta in plantas %}
-              <option value="{{ planta.id_planta }}">
-                {{ planta.nombre_comun }}
+              <option value="">Selecciona un experimiento</option>
+              {% for experimiento in experimientos %}
+              <option value="{{ experimiento.id_experimiento }}">
+                {{ experimiento.nombre }}
               </option>
               {% endfor %}
             </select>
-          </div>
-
-          <!-- Selección de etapa -->
-          <div class="col-md-6">
-            <label for="id_etapa" class="form-label">Etapa</label>
-            <select
-              name="id_etapa"
-              id="id_etapa"
-              class="form-select"
-              required
-            >
-              <option value="">Selecciona una etapa</option>
-              {% for etapa in etapas %}
-              <option value="{{ planta.id_etapa }}">
-                {{ planta.nombre_comun }}
-              </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <!-- Nombre de Etapa -->
-          <div class="col-md-6">
-            <label for="nombre_etapa" class="form-label"
-              >Nombre de la Etapa</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              name="nombre_etapa"
-              id="nombre_etapa"
-              required
-            />
           </div>
 
           <!-- Altura CM -->
@@ -142,31 +112,7 @@
               required
             />
           </div>
-
-          <!-- Hojas -->
-          <div class="col-md-6">
-            <label for="hojas" class="form-label">Altura cm</label>
-            <input
-              type="number"
-              class="form-control"
-              name="hojas"
-              id="hojas"
-              min="1"
-              required
-            />
-          </div>
-          <!-- Luz horas -->
-          <div class="col-md-6">
-            <label for="luz" class="form-label">Luz horas</label>
-            <input
-              type="number"
-              class="form-control"
-              name="luz"
-              id="luz"
-              min="1"
-              required
-            />
-          </div>
+          
           <!-- Fecha registro -->
           <div class="col-md-6">
             <label for="Fecha" class="form-label">Fecha</label>
@@ -177,6 +123,18 @@
               id="fecha"
               min="1"
               required
+            />
+          </div>
+
+          <!-- 🖼️ Campo para subir imagen -->
+          <div class="col-md-6">
+            <label for="imagen" class="form-label">Subir imagen</label>
+            <input
+              type="file"
+              id="imagen"
+              name="imagen"
+              class="form-control"
+              accept="image/*"
             />
           </div>
 
