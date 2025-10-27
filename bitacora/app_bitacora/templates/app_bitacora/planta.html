@@ -87,13 +87,16 @@
                 {{ planta.nombre_comun }}
               </h5>
               <p class="card-subtitle text-muted fst-italic mb-2">
-                {{ planta.nombre_cientifico | default:"(Sin nombre científico)" }}
+                {{ planta.nombre_cientifico | default:"(Sin nombre científico)"}}
               </p>
               <p class="card-text mb-1">
                 <strong>Familia:</strong> {{ planta.familia | default:"Desconocida" }}
               </p>
               <p class="card-text mb-1">
                 <strong>Región:</strong> {{ planta.region_origen|default:"No especificada" }}
+              </p>
+              <p class="card-text mb-1">
+                <strong>Rareza:</strong> {{ planta.rareza | default:"No especificada" }}
               </p>
               <p class="card-text mb-1">
                 <strong>Edad:</strong> {{ planta.edad_planta|default:"N/A" }}
