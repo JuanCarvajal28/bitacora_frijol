@@ -5,7 +5,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from app_bitacora.models import Experimentos, Plantas, Etapas, Registros
 from datetime import date
-
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+import io, base64
+from django.db.models import Avg
+from django.utils import timezone
 
 def index(request):
     return render(request, "app_bitacora/index.html")
@@ -134,7 +140,68 @@ def finalizar_experimento(request, id):
 @login_required
 def opciones_experimento(request, id):
     experimento = get_object_or_404(Experimentos, id_experimento=id, id_usuario=request.user)
-    return render(request, 'app_bitacora/opcionesExp.html', {'experimento': experimento})
+
+    registros = Registros.objects.filter(id_planta=experimento.id_planta).order_by('fecha_registro')
+
+    if not registros.exists():
+        return render(request, 'app_bitacora/opcionesExp.html', {
+            'experimento': experimento,
+            'tabla': [],
+            'grafica': None,
+            'mensaje': "Aún no hay registros para este experimento 🌱"
+        })
+
+    fechas = [r.fecha_registro for r in registros]
+    alturas = [float(r.altura_cm) for r in registros]
+
+    dias = np.array([(f - fechas[0]).days for f in fechas])
+    alturas = np.array(alturas)
+
+    n = len(dias)
+    sumXY = np.sum(dias * alturas)
+    sumXX = np.sum(dias ** 2)
+    sumX = np.sum(dias)
+    sumY = np.sum(alturas)
+
+    a1 = (n * sumXY - sumX * sumY) / (n * sumXX - sumX ** 2)
+    a0 = (sumY - a1 * sumX) / n
+
+    y_estimado = a0 + a1 * dias
+    r2 = 1 - (np.sum((alturas - y_estimado) ** 2) / np.sum((alturas - np.mean(alturas)) ** 2))
+    ecuacion = f"y = {a1:.4f}x + {a0:.4f}"
+
+    plt.figure(figsize=(7, 5))
+    plt.scatter(dias, alturas, color='green', label='Datos reales')
+    plt.plot(dias, y_estimado, 'r-', linewidth=2, label=f'Regresión: {ecuacion}')
+    plt.title('Crecimiento de Planta de Frijol 🌱', fontsize=13)
+    plt.xlabel('Días desde la primera medición')
+    plt.ylabel('Altura (cm)')
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+    grafica_base64 = base64.b64encode(image_png).decode('utf-8')
+
+    tabla = [
+        {'fecha': r.fecha_registro, 'altura': r.altura_cm, 'luz': r.luz_horas}
+        for r in registros
+    ]
+
+    contexto = {
+        'experimento': experimento,
+        'tabla': tabla,
+        'grafica': grafica_base64,
+        'ecuacion': ecuacion,
+        'r2': round(r2, 4),
+        'pendiente': round(a1, 4),
+        'intercepto': round(a0, 4)
+    }
+
+    return render(request, 'app_bitacora/opcionesExp.html', contexto)
 
 @login_required
 def plantas(request):
