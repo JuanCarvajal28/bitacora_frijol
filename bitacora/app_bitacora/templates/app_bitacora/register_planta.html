@@ -77,23 +77,28 @@
       <h1>Registros del Cultivo 🌱</h1>
 
       <!-- FORMULARIO -->
-      <form method="POST" class="card p-4 shadow-sm mb-4">
+      <!-- <form method="POST" class="card p-4 shadow-sm mb-4"> -->
+      <form
+        method="POST"
+        enctype="multipart/form-data"
+        class="card p-4 shadow-sm mb-4"
+      >
         {% csrf_token %}
         <div class="row g-3">
           <!-- Selección de Planta -->
           <div class="col-md-6">
-            <label for="id_experimientos" class="form-label"
+            <label for="id_experimiento" class="form-label"
               >Experimentos</label
             >
             <select
-              name="id_experimientos"
-              id="id_experimientos"
+              name="id_experimento"
+              id="id_experimento"
               class="form-select"
               required
             >
               <option value="">Selecciona un experimiento</option>
               {% for experimiento in experimientos %}
-              <option value="{{ experimiento.id_experimiento }}">
+              <option value="{{ experimiento.id_experimento }}">
                 {{ experimiento.nombre }}
               </option>
               {% endfor %}
@@ -102,25 +107,25 @@
 
           <!-- Altura CM -->
           <div class="col-md-6">
-            <label for="altura" class="form-label">Altura cm</label>
+            <label for="altura_cm" class="form-label">Altura cm</label>
             <input
               type="number"
               class="form-control"
-              name="altura"
-              id="altura"
+              name="altura_cm"
+              id="altura_cm"
               min="1"
               required
             />
           </div>
-          
+
           <!-- Fecha registro -->
           <div class="col-md-6">
-            <label for="Fecha" class="form-label">Fecha</label>
+            <label for="fecha_registro" class="form-label">Fecha</label>
             <input
               type="date"
               class="form-control"
-              name="fecha"
-              id="fecha"
+              name="fecha_registro"
+              id="fecha_registro"
               min="1"
               required
             />
@@ -146,33 +151,62 @@
         </div>
       </form>
 
-      <!-- LISTA DE ETAPAS -->
-      <div class="row">
-        {% for etapa in etapas %}
-        <div class="col-md-6">
-          <div class="card card-etapa shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">{{ etapa.nombre_etapa }}</h5>
-              <h6 class="text-muted">Orden: {{ etapa.orden }}</h6>
-              <p class="card-text">
-                {{ etapa.descripcion|default:"(Sin descripción)" }}
-              </p>
-              <p class="small text-secondary">
-                🌿 Planta: {{ etapa.id_planta.nombre_comun }}
-              </p>
-              {% comment %}
-              <a
-                href="{% url 'eliminar_etapa' etapa.id_etapa %}"
-                class="btn btn-danger btn-sm"
-                >Eliminar</a
+      <!-- LISTA -->
+      <div class="container mt-4">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          {% for registro in registros %}
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              {% if registro.imagen %}
+              <img
+                src="{{ registro.imagen.url }}"
+                class="card-img-top"
+                alt="Imagen de planta"
+                style="object-fit: cover; height: 220px"
+              />
+              {% else %}
+              <div
+                class="d-flex align-items-center justify-content-center bg-light"
+                style="height: 220px"
               >
-              {% endcomment %}
+                <span class="text-muted">Sin imagen</span>
+              </div>
+              {% endif %}
+
+              <div class="card-body">
+                <h5 class="card-title">
+                  {{ registro.id_experimento.nombre }}
+                </h5>
+                <p class="card-text mb-1">
+                  🌿 <strong>Altura:</strong> {{ registro.altura_cm }} cm
+                </p>
+                <p class="card-text mb-1">
+                  📅 <strong>Fecha:</strong> {{ registro.fecha_registro }}
+                </p>
+              </div>
+
+              <div class="card-footer text-center">
+                <form
+                  method="POST"
+                  action="#"
+                  class="d-inline"
+                >
+                  {% csrf_token %}
+                  <button
+                    type="submit"
+                    class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm('¿Seguro que deseas eliminar este registro?')"
+                  >
+                    Eliminar
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
+          {% empty %}
+          <p class="text-center mt-3 text-muted">No hay registros aún 🌱</p>
+          {% endfor %}
         </div>
-        {% empty %}
-        <p class="text-center">No hay etapas registradas aún 🌿</p>
-        {% endfor %}
       </div>
     </div>
 

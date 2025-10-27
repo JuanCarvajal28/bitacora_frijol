@@ -6,12 +6,14 @@ from django.contrib.auth.decorators import login_required
 from app_bitacora.models import Experimentos, Plantas, Etapas, Registros
 from datetime import date
 import matplotlib
-matplotlib.use('Agg')
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import io, base64
 from django.db.models import Avg
 from django.utils import timezone
+
 
 def index(request):
     return render(request, "app_bitacora/index.html")
@@ -37,9 +39,7 @@ def signup(request):
         login(request, user)
         return redirect("menu")
 
-    return render(
-        request, "app_bitacora/signup.html", {"imagen_estado": imagen_estado}
-    )
+    return render(request, "app_bitacora/signup.html", {"imagen_estado": imagen_estado})
 
 
 def login_view(request):
@@ -48,7 +48,7 @@ def login_view(request):
     storage = messages.get_messages(request)
     for _ in storage:
         pass
-    
+
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -103,7 +103,7 @@ def experimentos(request):
                 nombre=nombre,
                 descripcion=descripcion,
                 fecha_inicio=date.today(),
-                fecha_fin=fecha_fin if fecha_fin else None
+                fecha_fin=fecha_fin if fecha_fin else None,
             )
             messages.success(request, f"Experimento '{nombre}' creado exitosamente.")
         else:
@@ -146,19 +146,28 @@ def finalizar_experimento(request, id):
 
     return redirect("experimentos")
 
+
 @login_required
 def opciones_experimento(request, id):
-    experimento = get_object_or_404(Experimentos, id_experimento=id, id_usuario=request.user)
+    experimento = get_object_or_404(
+        Experimentos, id_experimento=id, id_usuario=request.user
+    )
 
-    registros = Registros.objects.filter(id_planta=experimento.id_planta).order_by('fecha_registro')
+    registros = Registros.objects.filter(id_planta=experimento.id_planta).order_by(
+        "fecha_registro"
+    )
 
     if not registros.exists():
-        return render(request, 'app_bitacora/opcionesExp.html', {
-            'experimento': experimento,
-            'tabla': [],
-            'grafica': None,
-            'mensaje': "Aún no hay registros para este experimento 🌱"
-        })
+        return render(
+            request,
+            "app_bitacora/opcionesExp.html",
+            {
+                "experimento": experimento,
+                "tabla": [],
+                "grafica": None,
+                "mensaje": "Aún no hay registros para este experimento 🌱",
+            },
+        )
 
     fechas = [r.fecha_registro for r in registros]
     alturas = [float(r.altura_cm) for r in registros]
@@ -168,49 +177,52 @@ def opciones_experimento(request, id):
 
     n = len(dias)
     sumXY = np.sum(dias * alturas)
-    sumXX = np.sum(dias ** 2)
+    sumXX = np.sum(dias**2)
     sumX = np.sum(dias)
     sumY = np.sum(alturas)
 
-    a1 = (n * sumXY - sumX * sumY) / (n * sumXX - sumX ** 2)
+    a1 = (n * sumXY - sumX * sumY) / (n * sumXX - sumX**2)
     a0 = (sumY - a1 * sumX) / n
 
     y_estimado = a0 + a1 * dias
-    r2 = 1 - (np.sum((alturas - y_estimado) ** 2) / np.sum((alturas - np.mean(alturas)) ** 2))
+    r2 = 1 - (
+        np.sum((alturas - y_estimado) ** 2) / np.sum((alturas - np.mean(alturas)) ** 2)
+    )
     ecuacion = f"y = {a1:.4f}x + {a0:.4f}"
 
     plt.figure(figsize=(7, 5))
-    plt.scatter(dias, alturas, color='green', label='Datos reales')
-    plt.plot(dias, y_estimado, 'r-', linewidth=2, label=f'Regresión: {ecuacion}')
-    plt.title('Crecimiento de Planta de Frijol 🌱', fontsize=13)
-    plt.xlabel('Días desde la primera medición')
-    plt.ylabel('Altura (cm)')
+    plt.scatter(dias, alturas, color="green", label="Datos reales")
+    plt.plot(dias, y_estimado, "r-", linewidth=2, label=f"Regresión: {ecuacion}")
+    plt.title("Crecimiento de Planta de Frijol 🌱", fontsize=13)
+    plt.xlabel("Días desde la primera medición")
+    plt.ylabel("Altura (cm)")
     plt.grid(True, alpha=0.3)
     plt.legend()
 
     buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
+    plt.savefig(buffer, format="png")
     buffer.seek(0)
     image_png = buffer.getvalue()
     buffer.close()
-    grafica_base64 = base64.b64encode(image_png).decode('utf-8')
+    grafica_base64 = base64.b64encode(image_png).decode("utf-8")
 
     tabla = [
-        {'fecha': r.fecha_registro, 'altura': r.altura_cm, 'luz': r.luz_horas}
+        {"fecha": r.fecha_registro, "altura": r.altura_cm, "luz": r.luz_horas}
         for r in registros
     ]
 
     contexto = {
-        'experimento': experimento,
-        'tabla': tabla,
-        'grafica': grafica_base64,
-        'ecuacion': ecuacion,
-        'r2': round(r2, 4),
-        'pendiente': round(a1, 4),
-        'intercepto': round(a0, 4)
+        "experimento": experimento,
+        "tabla": tabla,
+        "grafica": grafica_base64,
+        "ecuacion": ecuacion,
+        "r2": round(r2, 4),
+        "pendiente": round(a1, 4),
+        "intercepto": round(a0, 4),
     }
 
-    return render(request, 'app_bitacora/opcionesExp.html', contexto)
+    return render(request, "app_bitacora/opcionesExp.html", contexto)
+
 
 @login_required
 def plantas(request):
@@ -238,22 +250,39 @@ def plantas(request):
 
 @login_required
 def register_planta(request):
-    plantas = Plantas.objects.all()
-    etapas = Etapas.objects.select_related('id_planta').all()
+    # Traemos los experimentos para mostrar en el select
+    experimentos = Experimentos.objects.all()
 
-    if request.method == 'POST':
-        id_planta = request.POST.get('id_planta')
-        nombre_etapa = request.POST.get('nombre_etapa')
-        orden = request.POST.get('orden')
-        descripcion = request.POST.get('descripcion')
+    if request.method == "POST":
+        id_experimento = request.POST.get("id_experimento")
+        altura = request.POST.get("altura_cm")
+        fecha = request.POST.get("fecha_registro")
+        imagen = request.FILES.get("imagen")
 
-        Etapas.objects.create(
-            id_planta_id=id_planta,
-            nombre_etapa=nombre_etapa,
-            orden=orden,
-            descripcion=descripcion
+        # Validación básica
+        if not id_experimento or not altura or not fecha:
+            messages.error(request, "Por favor completa todos los campos obligatorios.")
+            return redirect("register_planta")
+
+        # Creamos el nuevo registro
+        nuevo_registro = Registros(
+            id_experimento_id=id_experimento,
+            altura_cm=altura,
+            fecha_registro=fecha,
+            imagen=imagen,
         )
-        # return redirect('etapas')
+        nuevo_registro.save()
 
-    return render(request, 'app_bitacora/register_planta.html', {'plantas': plantas, 'etapas': etapas})
-    # return render(request, "app_bitacora/register_planta.html", {"register_planta": plantas})
+        messages.success(request, "✅ Registro agregado exitosamente.")
+        return redirect("register_planta")
+
+    # Traemos los registros para mostrarlos en la tabla o cards
+    registros = Registros.objects.select_related("id_experimento").order_by(
+        "-fecha_registro"
+    )
+
+    return render(
+        request,
+        "app_bitacora/register_planta.html",
+        {"experimientos": experimentos, "registros": registros},
+    )

@@ -89,4 +89,4 @@ class Registros(models.Model):
         verbose_name_plural = "Registros"
 
     def __str__(self):
-        return f"Registro {self.id_registro} - Planta {self.id_planta}"
+        return f"Registro {self.id_registro} - Experimento {self.id_experimento_id}"
