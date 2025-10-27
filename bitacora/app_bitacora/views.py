@@ -39,6 +39,10 @@ def register(request):
 def login_view(request):
     imagen_estado = "img/semillin_sonriendo_señalando.png"
 
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass
+    
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -60,7 +64,9 @@ def menu(request):
 
 
 def logout_view(request):
-    logout(request)
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass
     return redirect("index")
 
 
@@ -125,6 +131,10 @@ def finalizar_experimento(request, id):
 
     return redirect("experimentos")
 
+@login_required
+def opciones_experimento(request, id):
+    experimento = get_object_or_404(Experimentos, id_experimento=id, id_usuario=request.user)
+    return render(request, 'app_bitacora/opcionesExp.html', {'experimento': experimento})
 
 @login_required
 def plantas(request):

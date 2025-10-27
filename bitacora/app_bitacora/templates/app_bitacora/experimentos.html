@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     {% load static %}
     <meta charset="UTF-8">
@@ -16,44 +15,49 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            text-align: center;
         }
 
         h1 {
             color: #2a4d24;
-            font-size: 42px;
-            margin: 40px 0 20px;
-        }
-
-        p {
-            font-size: 18px;
-            margin-bottom: 30px;
+            font-size: 44px;
+            margin: 40px 0 25px;
+            font-weight: 800;
+            text-align: center;
         }
 
         .form-nuevo {
-            margin-bottom: 40px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 35px;
+            text-align: center;
         }
 
         input,
         textarea {
-            width: 90%;
-            margin: 10px 0;
+            width: 100%;
+            margin: 8px 0;
             padding: 10px;
             border: 1px solid #c8c8c8;
             border-radius: 8px;
+            font-size: 15px;
+            resize: none;
         }
 
         button {
             background-color: #3c8045;
             color: white;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 25px;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background-color 0.2s ease;
         }
 
         button:hover {
@@ -61,33 +65,76 @@
         }
 
         .lista {
-            width: 80%;
-            max-width: 600px;
+            width: 90%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
         .experimento-item {
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            padding: 18px 20px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .experimento-item:hover {
+            transform: scale(1.01);
+            border-color: #3c804580;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
         }
 
         .exp-info {
+            width: 100%;
             text-align: left;
         }
 
+        .exp-info strong {
+            font-size: 18px;
+            color: #2a4d24;
+        }
+
+        .exp-info small {
+            display: block;
+            color: #555;
+            font-size: 14px;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .botones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
         .btn {
-            background-color: #c0392b;
+            background-color: #3c8045;
             border: none;
             color: white;
-            padding: 8px 12px;
+            padding: 8px 14px;
             border-radius: 6px;
             cursor: pointer;
             text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn:hover {
+            background-color: #2f6136;
+            transform: scale(1.05);
+        }
+
+        .btn-eliminar {
+            background-color: #c0392b;
         }
 
         .btn-eliminar:hover {
@@ -102,6 +149,10 @@
             text-decoration: none;
         }
 
+        .back-arrow:hover {
+            color: #2f6136;
+        }
+
         .semillin {
             position: fixed;
             bottom: 20px;
@@ -109,9 +160,9 @@
             width: 120px;
             height: auto;
         }
+
     </style>
 </head>
-
 <body>
     <a href="{% url 'menu' %}" class="back-arrow" title="Volver al inicio">
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
@@ -133,31 +184,30 @@
     <div class="lista">
         {% for exp in experimentos %}
         <div class="experimento-item">
-            <strong>{{ exp.nombre }}</strong> <br>
-            <small>
-                Inicio: {{ exp.fecha_inicio|date:"d/m/Y" }}
-                {% if exp.fecha_fin %}
-                | Finalizado: {{ exp.fecha_fin|date:"d/m/Y" }}
-                {% else %}
-                | En curso 🌱
-                {% endif %}
-            </small><br>
-            <small>{{ exp.descripcion|default:"(sin descripción)" }}</small>
-        
+            <div class="exp-info">
+                <strong>Experimento #{{ forloop.counter }}: {{ exp.nombre }}</strong><br>
+                <small>
+                    Inicio: {{ exp.fecha_inicio|date:"d/m/Y" }}
+                    {% if exp.fecha_fin %}
+                        | Finalizado: {{ exp.fecha_fin|date:"d/m/Y" }}
+                    {% else %}
+                        | En curso 🌱
+                    {% endif %}
+                </small><br>
+                <small>{{ exp.descripcion|default:"(sin descripción)" }}</small>
+            </div>
+
             <div class="botones">
+                <a href="{% url 'opciones_experimento' exp.id_experimento %}" class="btn">Entrar</a>
                 {% if not exp.fecha_fin %}
                 <a href="{% url 'finalizar_experimento' exp.id_experimento %}" class="btn">Finalizar</a>
                 {% endif %}
-                <a href="{% url 'eliminar_experimento' exp.id_experimento %}" class="btn">Eliminar</a>
+                <a href="{% url 'eliminar_experimento' exp.id_experimento %}" class="btn btn-eliminar">Eliminar</a>
             </div>
         </div>
-        {% empty %}
-        <p>No tienes experimentos aún 🌿</p>
         {% endfor %}
     </div>
 
     <img src="{% static 'img/semillin_sonriendo_señalando.png' %}" class="semillin" alt="Semillín saludando">
-
 </body>
-
 </html>
