@@ -81,7 +81,7 @@ def experimentos(request):
     if request.method == "POST":
         nombre = request.POST.get("nombre")
         descripcion = request.POST.get("descripcion")
-        date = request.POST.get("fecha_fin")
+        fecha_fin = request.POST.get("fecha_fin")
 
         if not nombre:
             messages.error(request, "El nombre del experimento es obligatorio.")
@@ -96,7 +96,7 @@ def experimentos(request):
                 nombre=nombre,
                 descripcion=descripcion,
                 fecha_inicio=date.today(),
-                fecha_fin=fecha_fin,
+                fecha_fin=fecha_fin if fecha_fin else None
             )
             messages.success(request, f"Experimento '{nombre}' creado exitosamente.")
         else:
