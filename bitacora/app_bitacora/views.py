@@ -148,14 +148,12 @@ def finalizar_experimento(request, id):
 
 
 @login_required
-def opciones_experimento(request, id):
+def visualizacion_datos(request, id):
     experimento = get_object_or_404(
         Experimentos, id_experimento=id, id_usuario=request.user
     )
 
-    registros = Registros.objects.filter(id_planta=experimento.id_planta).order_by(
-        "fecha_registro"
-    )
+    registros = Registros.objects.filter(id_experimento=experimento).order_by("fecha_registro")
 
     if not registros.exists():
         return render(
@@ -193,21 +191,22 @@ def opciones_experimento(request, id):
     plt.figure(figsize=(7, 5))
     plt.scatter(dias, alturas, color="green", label="Datos reales")
     plt.plot(dias, y_estimado, "r-", linewidth=2, label=f"Regresión: {ecuacion}")
-    plt.title("Crecimiento de Planta de Frijol 🌱", fontsize=13)
+    plt.title("Crecimiento de Planta de Frijol", fontsize=13)
     plt.xlabel("Días desde la primera medición")
     plt.ylabel("Altura (cm)")
     plt.grid(True, alpha=0.3)
     plt.legend()
 
+    plt.xticks(range(int(dias.min()), int(dias.max()) + 1))
+
     buffer = io.BytesIO()
     plt.savefig(buffer, format="png")
     buffer.seek(0)
-    image_png = buffer.getvalue()
+    grafica_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
     buffer.close()
-    grafica_base64 = base64.b64encode(image_png).decode("utf-8")
 
     tabla = [
-        {"fecha": r.fecha_registro, "altura": r.altura_cm, "luz": r.luz_horas}
+        {"fecha": r.fecha_registro, "altura": r.altura_cm}
         for r in registros
     ]
 
@@ -221,8 +220,7 @@ def opciones_experimento(request, id):
         "intercepto": round(a0, 4),
     }
 
-    return render(request, "app_bitacora/opcionesExp.html", contexto)
-
+    return render(request, "app_bitacora/visuaDatos.html", contexto)
 
 @login_required
 def plantas(request):
@@ -250,7 +248,6 @@ def plantas(request):
 
 @login_required
 def register_planta(request):
-    # Traemos los experimentos para mostrar en el select
     experimentos = Experimentos.objects.all()
 
     if request.method == "POST":
@@ -259,12 +256,10 @@ def register_planta(request):
         fecha = request.POST.get("fecha_registro")
         imagen = request.FILES.get("imagen")
 
-        # Validación básica
         if not id_experimento or not altura or not fecha:
             messages.error(request, "Por favor completa todos los campos obligatorios.")
             return redirect("register_planta")
 
-        # Creamos el nuevo registro
         nuevo_registro = Registros(
             id_experimento_id=id_experimento,
             altura_cm=altura,
@@ -276,7 +271,6 @@ def register_planta(request):
         messages.success(request, "✅ Registro agregado exitosamente.")
         return redirect("register_planta")
 
-    # Traemos los registros para mostrarlos en la tabla o cards
     registros = Registros.objects.select_related("id_experimento").order_by(
         "-fecha_registro"
     )

@@ -13,5 +13,5 @@ urlpatterns = [
     path('experimentos/finalizar/<int:id>/', views.finalizar_experimento, name='finalizar_experimento'),
     path('plantas/', views.plantas, name='plantas'),
     path('register_planta/', views.register_planta, name='register_planta'),
-    path('experimentos/opciones/<int:id>/', views.opciones_experimento, name='opciones_experimento'),
+    path('experimentos/opciones/<int:id>/', views.visualizacion_datos, name='opciones_experimento'),
 ]
