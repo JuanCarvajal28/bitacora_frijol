@@ -70,10 +70,17 @@ def menu(request):
 
 
 def logout_view(request):
+    logout(request)
+
     storage = messages.get_messages(request)
     for _ in storage:
         pass
-    return redirect("index")
+
+    request.session.flush()
+
+    response = redirect("index")
+    response.delete_cookie("messages")
+    return response
 
 
 @login_required
