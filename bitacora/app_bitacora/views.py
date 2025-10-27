@@ -280,3 +280,6 @@ def register_planta(request):
         "app_bitacora/register_planta.html",
         {"experimientos": experimentos, "registros": registros},
     )
+
+def handler404(request, exception):
+    return render(request, 'app_bitacora/404error.html', status=404)

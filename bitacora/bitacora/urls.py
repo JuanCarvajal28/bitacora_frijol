@@ -19,6 +19,8 @@ from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
 
+handler404 = 'app_bitacora.views.handler404'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('app_bitacora.urls')),
