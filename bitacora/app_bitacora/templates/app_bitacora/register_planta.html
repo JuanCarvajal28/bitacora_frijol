@@ -4,7 +4,7 @@
     {% load static %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Etapas del Cultivo - Bitácora</title>
+    <title>Registros del Cultivo - Bitácora</title>
 
     <!-- Bootstrap -->
     <link
@@ -54,7 +54,8 @@
         width: 120px;
         height: auto;
       }
-      .not-found{
+
+      .not-found {
         width: 100%;
       }
     </style>
@@ -80,7 +81,6 @@
       <h1>Registros del Cultivo 🌱</h1>
 
       <!-- FORMULARIO -->
-      <!-- <form method="POST" class="card p-4 shadow-sm mb-4"> -->
       <form
         method="POST"
         enctype="multipart/form-data"
@@ -88,38 +88,38 @@
       >
         {% csrf_token %}
         <div class="row g-3">
-          <!-- Selección de Planta -->
+          <!-- Selección de Experimento -->
           <div class="col-md-6">
-            <label for="id_experimiento" class="form-label"
-              >Experimentos</label
-            >
+            <label for="id_experimento" class="form-label">Experimentos</label>
             <select
               name="id_experimento"
               id="id_experimento"
               class="form-select"
               required
             >
-              <option value="">Selecciona un experimiento</option>
-              {% for experimiento in experimientos %}
-              <option value="{{ experimiento.id_experimento }}">
-                {{ experimiento.nombre }}
+              <option value="">Selecciona un experimento</option>
+              {% for experimento in experimentos %}
+              <option value="{{ experimento.id_experimento }}">
+                {{ experimento.nombre }}
               </option>
               {% endfor %}
             </select>
           </div>
 
           <!-- Altura CM -->
-          <input
-            type="number"
-            class="form-control"
-            name="altura_cm"
-            id="altura_cm"
-            step="0.01"
-            min="0"
-            required
-            placeholder="Altura (cm)"
-          />
-
+          <div class="col-md-6">
+            <label for="altura_cm" class="form-label">Altura (cm)</label>
+            <input
+              type="number"
+              class="form-control"
+              name="altura_cm"
+              id="altura_cm"
+              step="0.01"
+              min="0"
+              required
+              placeholder="Altura (cm)"
+            />
+          </div>
 
           <!-- Fecha registro -->
           <div class="col-md-6">
@@ -129,7 +129,6 @@
               class="form-control"
               name="fecha_registro"
               id="fecha_registro"
-              min="1"
               required
             />
           </div>
@@ -148,13 +147,13 @@
 
           <div class="col-12 text-center mt-3">
             <button type="submit" class="btn btn-primary px-4">
-              ➕ Registrar Bitacora
+              ➕ Registrar Bitácora
             </button>
           </div>
         </div>
       </form>
 
-      <!-- LISTA -->
+      <!-- LISTA DE REGISTROS -->
       <div class="container mt-4">
         <div class="row row-cols-1 row-cols-md-3 g-4">
           {% for registro in registros %}
