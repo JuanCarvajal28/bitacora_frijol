@@ -256,7 +256,7 @@ def register_planta(request):
         fecha = request.POST.get("fecha_registro")
         imagen = request.FILES.get("imagen")
 
-        if not id_experimento or not altura or not fecha:
+        if not id_experimento or altura == "" or not fecha:
             messages.error(request, "Por favor completa todos los campos obligatorios.")
             return redirect("register_planta")
 
@@ -271,9 +271,7 @@ def register_planta(request):
         messages.success(request, "✅ Registro agregado exitosamente.")
         return redirect("register_planta")
 
-    registros = Registros.objects.select_related("id_experimento").order_by(
-        "-fecha_registro"
-    )
+    registros = Registros.objects.select_related("id_experimento").order_by("-fecha_registro")
 
     return render(
         request,
