@@ -153,7 +153,9 @@ def visualizacion_datos(request, id):
         Experimentos, id_experimento=id, id_usuario=request.user
     )
 
-    registros = Registros.objects.filter(id_experimento=experimento).order_by("fecha_registro")
+    registros = Registros.objects.filter(id_experimento=experimento).order_by(
+        "fecha_registro"
+    )
 
     if not registros.exists():
         return render(
@@ -205,10 +207,7 @@ def visualizacion_datos(request, id):
     grafica_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
     buffer.close()
 
-    tabla = [
-        {"fecha": r.fecha_registro, "altura": r.altura_cm}
-        for r in registros
-    ]
+    tabla = [{"fecha": r.fecha_registro, "altura": r.altura_cm} for r in registros]
 
     contexto = {
         "experimento": experimento,
@@ -221,6 +220,7 @@ def visualizacion_datos(request, id):
     }
 
     return render(request, "app_bitacora/visuaDatos.html", contexto)
+
 
 @login_required
 def plantas(request):
@@ -242,13 +242,17 @@ def plantas(request):
         )
         return redirect("plantas")
 
-    plantas = Plantas.objects.all()
-    return render(request, "app_bitacora/planta.html", {"plantas": plantas})
+    plantas_usuario = Plantas.objects.filter(
+        id_planta__in=Experimentos.objects.filter(id_usuario=request.user).values(
+            "id_planta"
+        )
+    )
+    return render(request, "app_bitacora/planta.html", {"plantas": plantas_usuario})
 
 
 @login_required
 def register_planta(request):
-    experimentos = Experimentos.objects.all()
+    experimentos = Experimentos.objects.filter(id_usuario=request.user)
 
     if request.method == "POST":
         id_experimento = request.POST.get("id_experimento")
@@ -256,7 +260,7 @@ def register_planta(request):
         fecha = request.POST.get("fecha_registro")
         imagen = request.FILES.get("imagen")
 
-        if not id_experimento or altura == "" or not fecha:
+        if not id_experimento or not altura or not fecha:
             messages.error(request, "Por favor completa todos los campos obligatorios.")
             return redirect("register_planta")
 
@@ -271,13 +275,18 @@ def register_planta(request):
         messages.success(request, "✅ Registro agregado exitosamente.")
         return redirect("register_planta")
 
-    registros = Registros.objects.select_related("id_experimento").order_by("-fecha_registro")
+    registros = (
+        Registros.objects.select_related("id_experimento")
+        .filter(id_experimento__id_usuario=request.user)
+        .order_by("-fecha_registro")
+    )
 
     return render(
         request,
         "app_bitacora/register_planta.html",
-        {"experimientos": experimentos, "registros": registros},
+        {"experimentos": experimentos, "registros": registros},
     )
 
+
 def handler404(request, exception):
-    return render(request, 'app_bitacora/404error.html', status=404)
+    return render(request, "app_bitacora/404error.html", status=404)
