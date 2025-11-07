@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from app_bitacora.models import Experimentos, Plantas, Etapas, Registros
+from app_bitacora.models import Experimentos, Plantas, Registros
 from datetime import date
 import matplotlib
 from django.http import HttpResponse

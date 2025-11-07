@@ -25,29 +25,6 @@ class Plantas(models.Model):
         return self.nombre_comun
 
 # ==========================
-# MODELO: ETAPAS
-# ==========================
-class Etapas(models.Model):
-    id_etapa = models.AutoField(primary_key=True)
-    id_planta = models.ForeignKey(
-        'Plantas',
-        on_delete=models.DO_NOTHING,
-        db_column='id_planta'
-    )
-    nombre_etapa = models.CharField(max_length=100)
-    orden = models.IntegerField(blank=True, null=True)
-    descripcion = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'etapas'
-        verbose_name = "Etapa"
-        verbose_name_plural = "Etapas"
-
-    def __str__(self):
-        return self.nombre_etapa
-
-# ==========================
 # MODELO: EXPERIMENTOS
 # ==========================
 class Experimentos(models.Model):
