@@ -10,8 +10,11 @@ urlpatterns = [
     path('experimentos/', views.experimentos, name='experimentos'),
     path('experimentos/eliminar/<int:id>/', views.eliminar_experimento, name='eliminar_experimento'),
     path('registers/eliminar/<int:id>/', views.eliminar_register_planta, name='eliminar_register_planta'),
+    # path("registro/editar/<int:id>/", views.editar_registro, name="editar_registro"),
+    path('register_planta/editar/<int:id>/', views.editar_registro, name='editar_register_planta'),
     path('experimentos/finalizar/<int:id>/', views.finalizar_experimento, name='finalizar_experimento'),
     path('plantas/', views.plantas, name='plantas'),
     path('register_planta/', views.register_planta, name='register_planta'),
     path('experimentos/opciones/<int:id>/', views.visualizacion_datos, name='opciones_experimento'),
+    path('exportar_csv/<int:id_experimento>/', views.exportar_csv, name='exportar_csv'),
 ]

@@ -199,14 +199,13 @@
                   >
                     Eliminar
                   </button>
-                  <button
-                    type="submit"
-                    class="btn btn-outline-primary btn-sm"
-                    onclick=""
-                  >
-                    Editar
-                  </button>
                 </form>
+                <a
+                  href="{% url 'editar_register_planta' registro.id_registro %}"
+                  class="btn btn-outline-primary btn-sm ms-2"
+                >
+                  Editar
+                </a>
               </div>
             </div>
           </div>

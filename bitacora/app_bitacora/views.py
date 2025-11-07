@@ -3,9 +3,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from app_bitacora.models import Experimentos, Plantas, Etapas, Registros
+from app_bitacora.models import Experimentos, Plantas, Registros
 from datetime import date
 import matplotlib
+from django.http import HttpResponse
+import csv
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -133,6 +135,34 @@ def eliminar_register_planta(request, id):
     registers.delete()
     return redirect("register_planta")
 
+
+@login_required
+def editar_registro(request, id):
+    registro = get_object_or_404(
+        Registros, id_registro=id, id_experimento__id_usuario=request.user
+    )
+    experimentos = Experimentos.objects.filter(id_usuario=request.user)
+
+    if request.method == "POST":
+        id_experimento = request.POST.get("id_experimento")
+        registro.id_experimento_id = id_experimento
+        registro.altura_cm = request.POST.get("altura_cm")
+        registro.fecha_registro = request.POST.get("fecha_registro")
+
+        if "imagen" in request.FILES:
+            registro.imagen = request.FILES["imagen"]
+
+        registro.save()
+        messages.success(request, "✅ Registro actualizado correctamente.")
+        return redirect("register_planta")
+
+    return render(
+        request,
+        "app_bitacora/editar_registro.html",
+        {"registro": registro, "experimentos": experimentos},
+    )
+
+
 @login_required
 def finalizar_experimento(request, id):
     experimento = get_object_or_404(
@@ -162,6 +192,11 @@ def visualizacion_datos(request, id):
     registros = Registros.objects.filter(id_experimento=experimento).order_by(
         "fecha_registro"
     )
+
+    # verificar que el experimento pertenezca al usuario logueado
+    if experimento.id_usuario != request.user:
+        messages.error(request, "❌ No tienes permiso para ver este experimento.")
+        return redirect("experimentos")
 
     if not registros.exists():
         return render(
@@ -296,3 +331,24 @@ def register_planta(request):
 
 def handler404(request, exception):
     return render(request, "app_bitacora/404error.html", status=404)
+
+
+def exportar_csv(request, id_experimento):
+    experimento = Experimentos.objects.get(id_experimento=id_experimento)
+    registros = Registros.objects.filter(id_experimento=experimento).order_by(
+        "fecha_registro"
+    )
+
+    # Crear la respuesta HTTP como archivo CSV
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = (
+        f'attachment; filename="{experimento.nombre}_datos.csv"'
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(["Fecha", "Altura (cm)"])  # Encabezados
+
+    for r in registros:
+        writer.writerow([r.fecha_registro, r.altura_cm])
+
+    return response
