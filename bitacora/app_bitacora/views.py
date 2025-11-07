@@ -191,6 +191,11 @@ def visualizacion_datos(request, id):
         "fecha_registro"
     )
 
+    # verificar que el experimento pertenezca al usuario logueado
+    if experimento.id_usuario != request.user:
+        messages.error(request, "❌ No tienes permiso para ver este experimento.")
+        return redirect("experimentos")
+
     if not registros.exists():
         return render(
             request,
