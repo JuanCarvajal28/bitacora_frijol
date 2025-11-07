@@ -16,4 +16,5 @@ urlpatterns = [
     path('plantas/', views.plantas, name='plantas'),
     path('register_planta/', views.register_planta, name='register_planta'),
     path('experimentos/opciones/<int:id>/', views.visualizacion_datos, name='opciones_experimento'),
+    path('exportar_csv/<int:id_experimento>/', views.exportar_csv, name='exportar_csv'),
 ]

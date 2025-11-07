@@ -1,101 +1,140 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
+  <head>
     {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ experimento.nombre }} - Bitácora Frijol</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            text-align: center;
-            color: #2a4d24;
-        }
-        h1 {
-            margin-top: 30px;
-        }
-        .contenedor {
-            width: 90%;
-            margin: auto;
-            max-width: 900px;
-        }
-        table {
-            width: 100%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-        th, td {
-            border-bottom: 1px solid #ddd;
-            padding: 10px;
-        }
-        th {
-            background-color: #3c8045;
-            color: white;
-        }
-        .grafica {
-            margin: 30px auto;
-        }
-        .datos {
-            background: #fff;
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-top: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        .back-arrow {
-            position: absolute;
-            top: 25px;
-            left: 25px;
-            color: #3c8045;
-            text-decoration: none;
-        }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        text-align: center;
+        color: #2a4d24;
+      }
+      h1 {
+        margin-top: 30px;
+      }
+      .contenedor {
+        width: 90%;
+        margin: auto;
+        max-width: 900px;
+      }
+      table {
+        width: 100%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      th,
+      td {
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+      }
+      th {
+        background-color: #3c8045;
+        color: white;
+      }
+      .grafica {
+        margin: 30px auto;
+      }
+      .datos {
+        background: #fff;
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-top: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      .back-arrow {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        color: #3c8045;
+        text-decoration: none;
+      }
+
+      .btn-exportar {
+        background-color: #3c8045;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.2s ease;
+      }
+      .btn-exportar:hover {
+        background-color: #2e6535;
+      }
     </style>
-</head>
-<body>
-    <a href="{% url 'experimentos' %}" class="back-arrow" title="Volver al inicio">
-        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
-            <path d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1"/>
-        </svg>
+  </head>
+  <body>
+    <a
+      href="{% url 'experimentos' %}"
+      class="back-arrow"
+      title="Volver al inicio"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="30"
+        height="30"
+        fill="currentColor"
+        class="bi bi-arrow-left-square-fill"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1"
+        />
+      </svg>
     </a>
 
     <h1>Visualización de Datos - {{ experimento.nombre }}</h1>
 
     {% if mensaje %}
-        <p>{{ mensaje }}</p>
+    <p>{{ mensaje }}</p>
     {% else %}
-        <div class="contenedor">
-            <h2>Tabla de Datos</h2>
-            <table>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Altura (cm)</th>
-                </tr>
-                {% for fila in tabla %}
-                <tr>
-                    <td>{{ fila.fecha }}</td>
-                    <td>{{ fila.altura }}</td>
-                </tr>
-                {% endfor %}
-            </table>
 
+    <div class="contenedor">
+      <h2>Tabla de Datos</h2>
+      <a
+        href="{% url 'exportar_csv' experimento.id_experimento %}"
+        class="btn-exportar"
+      >
+        📄 Exportar a CSV
+      </a>
+      <table>
+        <tr>
+          <th>Fecha</th>
+          <th>Altura (cm)</th>
+        </tr>
+        {% for fila in tabla %}
+        <tr>
+          <td>{{ fila.fecha }}</td>
+          <td>{{ fila.altura }}</td>
+        </tr>
+        {% endfor %}
+      </table>
 
-            <div class="datos">
-                <strong>Ecuación:</strong> {{ ecuacion }} <br>
-                <strong>R²:</strong> {{ r2 }} <br>
-                <strong>Pendiente:</strong> {{ pendiente }} cm/día <br>
-                <strong>Intercepto:</strong> {{ intercepto }} cm
-            </div>
+      <div class="datos">
+        <strong>Ecuación:</strong> {{ ecuacion }} <br />
+        <strong>R²:</strong> {{ r2 }} <br />
+        <strong>Pendiente:</strong> {{ pendiente }} cm/día <br />
+        <strong>Intercepto:</strong> {{ intercepto }} cm
+      </div>
 
-            <div class="grafica">
-                <img src="data:image/png;base64,{{ grafica }}" alt="Gráfica de regresión" style="max-width:90%; border-radius:8px;">
-            </div>
-        </div>
+      <div class="grafica">
+        <img
+          src="data:image/png;base64,{{ grafica }}"
+          alt="Gráfica de regresión"
+          style="max-width: 90%; border-radius: 8px"
+        />
+      </div>
+    </div>
     {% endif %}
-</body>
+  </body>
 </html>

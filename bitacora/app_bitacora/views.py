@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from app_bitacora.models import Experimentos, Plantas, Etapas, Registros
 from datetime import date
 import matplotlib
+from django.http import HttpResponse
+import csv
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -329,3 +331,24 @@ def register_planta(request):
 
 def handler404(request, exception):
     return render(request, "app_bitacora/404error.html", status=404)
+
+
+def exportar_csv(request, id_experimento):
+    experimento = Experimentos.objects.get(id_experimento=id_experimento)
+    registros = Registros.objects.filter(id_experimento=experimento).order_by(
+        "fecha_registro"
+    )
+
+    # Crear la respuesta HTTP como archivo CSV
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = (
+        f'attachment; filename="{experimento.nombre}_datos.csv"'
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(["Fecha", "Altura (cm)"])  # Encabezados
+
+    for r in registros:
+        writer.writerow([r.fecha_registro, r.altura_cm])
+
+    return response
