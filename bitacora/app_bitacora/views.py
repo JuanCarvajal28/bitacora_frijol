@@ -128,6 +128,12 @@ def eliminar_experimento(request, id):
 
 
 @login_required
+def eliminar_register_planta(request, id):
+    registers = get_object_or_404(Registros, id_registro=id)
+    registers.delete()
+    return redirect("register_planta")
+
+@login_required
 def finalizar_experimento(request, id):
     experimento = get_object_or_404(
         Experimentos, id_experimento=id, id_usuario=request.user
