@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar Registro 🌿</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-light p-4">
+    <div class="container mt-4">
+      <h2 class="text-center mb-4">Editar Registro 🌱</h2>
+
+      <form method="POST" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        {% csrf_token %}
+        <div class="mb-3">
+        <label for="id_experimento" class="form-label">Experimento</label>
+        <select class="form-select" id="id_experimento" name="id_experimento" required>
+            {% for experimento in experimentos %}
+            <option value="{{ experimento.id_experimento }}"
+                {% if experimento.id_experimento == registro.id_experimento.id_experimento %}selected{% endif %}>
+                {{ experimento.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+        </div>
+
+
+        <div class="mb-3">
+          <label for="altura_cm" class="form-label">Altura (cm)</label>
+          <input
+            type="number"
+            class="form-control"
+            id="altura_cm"
+            name="altura_cm"
+            value="{{ registro.altura_cm }}"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="fecha_registro" class="form-label">Fecha</label>
+          <input
+            type="date"
+            class="form-control"
+            id="fecha_registro"
+            name="fecha_registro"
+            value="{{ registro.fecha_registro|date:'Y-m-d' }}"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="imagen" class="form-label">Imagen (opcional)</label>
+          {% if registro.imagen %}
+          <img
+            src="{{ registro.imagen.url }}"
+            alt="Imagen actual"
+            class="img-thumbnail mb-2"
+            style="width: 200px"
+          />
+          {% endif %}
+          <input type="file" name="imagen" id="imagen" class="form-control" />
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-success">Guardar Cambios</button>
+          <a href="{% url 'register_planta' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
