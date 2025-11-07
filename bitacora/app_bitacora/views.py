@@ -133,6 +133,34 @@ def eliminar_register_planta(request, id):
     registers.delete()
     return redirect("register_planta")
 
+
+@login_required
+def editar_registro(request, id):
+    registro = get_object_or_404(
+        Registros, id_registro=id, id_experimento__id_usuario=request.user
+    )
+    experimentos = Experimentos.objects.filter(id_usuario=request.user)
+
+    if request.method == "POST":
+        id_experimento = request.POST.get("id_experimento")
+        registro.id_experimento_id = id_experimento
+        registro.altura_cm = request.POST.get("altura_cm")
+        registro.fecha_registro = request.POST.get("fecha_registro")
+
+        if "imagen" in request.FILES:
+            registro.imagen = request.FILES["imagen"]
+
+        registro.save()
+        messages.success(request, "✅ Registro actualizado correctamente.")
+        return redirect("register_planta")
+
+    return render(
+        request,
+        "app_bitacora/editar_registro.html",
+        {"registro": registro, "experimentos": experimentos},
+    )
+
+
 @login_required
 def finalizar_experimento(request, id):
     experimento = get_object_or_404(
