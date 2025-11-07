@@ -176,9 +176,7 @@
               {% endif %}
 
               <div class="card-body">
-                <h5 class="card-title">
-                  {{ registro.id_experimento.nombre }}
-                </h5>
+                <h5 class="card-title">{{ registro.id_experimento.nombre }}</h5>
                 <p class="card-text mb-1">
                   🌿 <strong>Altura:</strong> {{ registro.altura_cm }} cm
                 </p>
@@ -190,7 +188,7 @@
               <div class="card-footer text-center">
                 <form
                   method="POST"
-                  action="#"
+                  action="{% url 'eliminar_register_planta' registro.id_registro %}"
                   class="d-inline"
                 >
                   {% csrf_token %}
@@ -200,6 +198,13 @@
                     onclick="return confirm('¿Seguro que deseas eliminar este registro?')"
                   >
                     Eliminar
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-outline-primary btn-sm"
+                    onclick=""
+                  >
+                    Editar
                   </button>
                 </form>
               </div>
