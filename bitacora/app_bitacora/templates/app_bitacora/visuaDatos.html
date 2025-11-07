@@ -107,6 +107,46 @@
       >
         📄 Exportar a CSV
       </a>
+      <form method="POST" style="margin-top: 20px">
+        {% csrf_token %}
+        <label for="dias_prediccion"
+          ><strong>Predecir altura (en días):</strong></label
+        ><br />
+        <input
+          type="number"
+          name="dias_prediccion"
+          id="dias_prediccion"
+          min="0"
+          required
+          style="
+            padding: 6px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-top: 5px;
+          "
+        />
+        <button
+          type="submit"
+          style="
+            background-color: #3c8045;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            margin-left: 6px;
+            cursor: pointer;
+          "
+        >
+          📈 Predecir
+        </button>
+      </form>
+
+      {% if prediccion %}
+      <p style="margin-top: 15px; font-size: 18px">
+        🌿 Altura estimada: <strong>{{ prediccion }} cm</strong>
+      </p>
+      {% endif %}
+
       <table>
         <tr>
           <th>Fecha</th>
