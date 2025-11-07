@@ -193,7 +193,7 @@ def visualizacion_datos(request, id):
         "fecha_registro"
     )
 
-    # verificar que el experimento pertenezca al usuario logueado
+    # Verificar permisos
     if experimento.id_usuario != request.user:
         messages.error(request, "❌ No tienes permiso para ver este experimento.")
         return redirect("experimentos")
@@ -210,6 +210,7 @@ def visualizacion_datos(request, id):
             },
         )
 
+    # --- Datos para la regresión ---
     fechas = [r.fecha_registro for r in registros]
     alturas = [float(r.altura_cm) for r in registros]
 
@@ -222,25 +223,48 @@ def visualizacion_datos(request, id):
     sumX = np.sum(dias)
     sumY = np.sum(alturas)
 
+    # Coeficientes de la recta
     a1 = (n * sumXY - sumX * sumY) / (n * sumXX - sumX**2)
     a0 = (sumY - a1 * sumX) / n
 
+    # Ajuste lineal
     y_estimado = a0 + a1 * dias
+
+    # R²
     r2 = 1 - (
         np.sum((alturas - y_estimado) ** 2) / np.sum((alturas - np.mean(alturas)) ** 2)
     )
+
     ecuacion = f"y = {a1:.4f}x + {a0:.4f}"
 
+    prediccion = None
+    if request.method == "POST":
+        try:
+            dias_pred = float(request.POST.get("dias_prediccion"))
+            prediccion = round(a0 + a1 * dias_pred, 2)
+        except:
+            prediccion = "Error en el valor ingresado"
+
+    # --- Gráfica ---
     plt.figure(figsize=(7, 5))
     plt.scatter(dias, alturas, color="green", label="Datos reales")
     plt.plot(dias, y_estimado, "r-", linewidth=2, label=f"Regresión: {ecuacion}")
+
+    if prediccion and isinstance(prediccion, (int, float)):
+        plt.scatter(
+            [dias_pred],
+            [prediccion],
+            color="blue",
+            s=80,
+            label=f"Predicción día {dias_pred}: {prediccion} cm",
+        )
+
     plt.title("Crecimiento de Planta de Frijol", fontsize=13)
     plt.xlabel("Días desde la primera medición")
     plt.ylabel("Altura (cm)")
     plt.grid(True, alpha=0.3)
     plt.legend()
-
-    plt.xticks(range(int(dias.min()), int(dias.max()) + 1))
+    plt.xticks(range(int(dias.min()), int(dias.max()) + 2))
 
     buffer = io.BytesIO()
     plt.savefig(buffer, format="png")
@@ -258,6 +282,7 @@ def visualizacion_datos(request, id):
         "r2": round(r2, 4),
         "pendiente": round(a1, 4),
         "intercepto": round(a0, 4),
+        "prediccion": prediccion,
     }
 
     return render(request, "app_bitacora/visuaDatos.html", contexto)
